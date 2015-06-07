@@ -71,6 +71,8 @@ sub get_cpu_settings() {
         # Populate core status, online / offline
         if ( open my $fh, '<', $power_file ) {
             my $cpu_power = <$fh>;
+            close $fh;
+
             chomp($cpu_power);
 
             if ($cpu_power == 1) {
