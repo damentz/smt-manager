@@ -52,7 +52,7 @@ sub get_cpu_settings() {
         # Populate core topology, primary / logical
         if ( open( my $fh, '<', $siblings_file ) ) {
 
-            my @siblings = split(',', <$fh>);
+            my @siblings = split(/,|-/, <$fh>);
             close $fh;
 
             my $cpu_num = $cpu;
