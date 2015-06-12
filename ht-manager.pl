@@ -125,8 +125,8 @@ sub set_logical_cpus($) {
 
         # Lets rebalance the interrupts after power state changes to guarantee
         # the system will remain stable.
-        unless ( system( '/etc/init.d/irqbalance restart' ) == 0 ) {
-            print STDERR "[ERROR] Failed to restart 'irqbalance', you may experience strange behavior.\n";
+        unless ( system( 'irqbalance --oneshot' ) == 0 ) {
+            print STDERR "[ERROR] Failed to balance interrupts with 'irqbalance --oneshot', you may experience strange behavior.\n";
         }
 
         print "\n";
