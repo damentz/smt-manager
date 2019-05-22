@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# ht-manager.pl - a script for managing logical cores
+# smt-manager.pl - a script for managing logical cores
 # Copyright (C) 2015  Steven Barrett
 #
 # This program is free software; you can redistribute it and/or
@@ -183,12 +183,12 @@ if ( defined $power_state && set_logical_cpus($power_state) ) {
 
 =head1 NAME
 
-ht-manager.pl - View current status of CPU topology or set logical cores to
+smt-manager.pl - View current status of CPU topology or set logical cores to
                 offline or online.
 
 =head1 SYNOPSIS
 
-ht-manager.pl [options]
+smt-manager.pl [options]
 
   --help        Prints this help.
   --online      Enables all logical CPU cores.

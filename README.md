@@ -1,12 +1,12 @@
-# ht-manager
+# smt-manager
 Enable or disable hyperthreading cores, or display your current CPU topology.
 
 ## NAME
-    ht-manager.pl - View current status of CPU topology or set logical cores
+    smt-manager.pl - View current status of CPU topology or set logical cores
     to offline or online.
 
 ## SYNOPSIS
-    ht-manager.pl [options]
+    smt-manager.pl [options]
 
       --help        Prints this help.
       --online      Enables all logical CPU cores.
