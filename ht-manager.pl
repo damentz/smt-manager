@@ -44,7 +44,7 @@ sub get_cpu_settings() {
     foreach my $cpu ( @$cpus_arr ) {
         my $siblings_file = SYS_CPU . "/$cpu/topology/thread_siblings_list";
         my $power_file    = SYS_CPU . "/$cpu/online";
-        my $cpu_settings;
+        my $cpu_settings = {};
 
         $cpu_settings->{'core_type'} = 'unknown';
         $cpu_settings->{'power'}     = 'unknown';
