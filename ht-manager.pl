@@ -29,19 +29,19 @@ use Pod::Usage;
 use constant SYS_CPU => '/sys/devices/system/cpu';
 use constant DEBUG => '0';
 
-sub get_cpus () {
+sub get_cpu_indexes () {
     opendir( my $dh, SYS_CPU ) or die "Cannot open folder: " . SYS_CPU;
-    my @cpus = map { s/cpu//r } grep { /^cpu[0-9]+/ } readdir($dh);
+    my @cpu_indexes = map { s/cpu//r } grep { /^cpu[0-9]+/ } readdir($dh);
     closedir $dh;
 
-    return \@cpus;
+    return \@cpu_indexes;
 }
 
 sub get_cpu_settings() {
-    my $cpus_arr = get_cpus();
+    my $cpu_indexes = get_cpu_list();
     my $cpus = {};
 
-    foreach my $cpu ( @$cpus_arr ) {
+    foreach my $cpu ( @$cpu_indexes ) {
         my $siblings_file = SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
         my $power_file    = SYS_CPU . "/cpu$cpu/online";
         my $cpu_settings = {};
