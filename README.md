@@ -1,5 +1,5 @@
 # smt-manager
-Enable or disable hyperthreading cores, or display your current CPU topology.
+Enable or disable logical cores, or display your current CPU topology.
 
 ## NAME
     smt-manager.pl - View current status of CPU topology or set logical cores
