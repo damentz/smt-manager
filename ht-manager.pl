@@ -98,7 +98,7 @@ sub set_logical_cpus($) {
     my $cpus = get_cpu_settings();
     my $state_changed = 0;
 
-    foreach my $cpu ( sort keys %$cpus ) {
+    foreach my $cpu ( sort { $a <=> $b } keys %$cpus ) {
         if ( ($cpus->{$cpu}->{'core_type'} eq 'logical' ||
              $cpus->{$cpu}->{'core_type'} eq 'unknown') &&
              $cpus->{$cpu}->{'power'} ne $power_state ) {
@@ -139,7 +139,7 @@ sub pretty_print_topology () {
     my $cpus = get_cpu_settings();
 
     print "CPU topology:\n";
-    foreach my $cpu ( sort keys %$cpus ) {
+    foreach my $cpu ( sort { $a <=> $b } keys %$cpus ) {
         print "$cpu: " . $cpus->{$cpu}->{'core_type'} . " | " . $cpus->{$cpu}->{'power'} . "\n";
     }
 
