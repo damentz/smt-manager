@@ -99,9 +99,9 @@ sub set_logical_cpus($) {
     my $state_changed = 0;
 
     foreach my $cpu ( sort keys %$cpus ) {
-        if ( ($$cpus{$cpu}->{'core_type'} eq 'logical' ||
-             $$cpus{$cpu}->{'core_type'} eq 'unknown') &&
-             $$cpus{$cpu}->{'power'} ne $power_state ) {
+        if ( ($cpus->{$cpu}->{'core_type'} eq 'logical' ||
+             $cpus->{$cpu}->{'core_type'} eq 'unknown') &&
+             $cpus->{$cpu}->{'power'} ne $power_state ) {
 
             my $power_file = SYS_CPU . "/$cpu/online";
 
@@ -140,7 +140,7 @@ sub pretty_print_topology () {
 
     print "CPU topology:\n";
     foreach my $cpu ( sort keys %$cpus ) {
-        print "$cpu: " . $$cpus{$cpu}->{'core_type'} . " | " . $$cpus{$cpu}->{'power'} . "\n";
+        print "$cpu: " . $cpus->{$cpu}->{'core_type'} . " | " . $cpus->{$cpu}->{'power'} . "\n";
     }
 
     print "\n";
