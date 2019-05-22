@@ -39,7 +39,7 @@ sub get_cpus () {
 
 sub get_cpu_settings() {
     my $cpus_arr = get_cpus();
-    my %cpus;
+    my $cpus = {};
 
     foreach my $cpu ( @$cpus_arr ) {
         my $siblings_file = SYS_CPU . "/$cpu/topology/thread_siblings_list";
@@ -85,11 +85,11 @@ sub get_cpu_settings() {
             $cpu_settings->{'power'} = 'online';
         }
 
-        $cpus{$cpu} = $cpu_settings;
+        $cpus->{$cpu} = $cpu_settings;
 
     }
 
-    return \%cpus;
+    return $cpus;
 
 }
 
