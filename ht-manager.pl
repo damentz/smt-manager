@@ -31,7 +31,7 @@ use constant DEBUG => '0';
 
 sub get_cpus () {
     opendir( my $dh, SYS_CPU ) or die "Cannot open folder: " . SYS_CPU;
-    my @cpus = grep { /^cpu[0-9]+/ } readdir($dh);
+    my @cpus = map { s/cpu//r } grep { /^cpu[0-9]+/ } readdir($dh);
     closedir $dh;
 
     return \@cpus;
@@ -42,8 +42,8 @@ sub get_cpu_settings() {
     my $cpus = {};
 
     foreach my $cpu ( @$cpus_arr ) {
-        my $siblings_file = SYS_CPU . "/$cpu/topology/thread_siblings_list";
-        my $power_file    = SYS_CPU . "/$cpu/online";
+        my $siblings_file = SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
+        my $power_file    = SYS_CPU . "/cpu$cpu/online";
         my $cpu_settings = {};
 
         $cpu_settings->{'core_type'} = 'unknown';
@@ -103,7 +103,7 @@ sub set_logical_cpus($) {
              $cpus->{$cpu}->{'core_type'} eq 'unknown') &&
              $cpus->{$cpu}->{'power'} ne $power_state ) {
 
-            my $power_file = SYS_CPU . "/$cpu/online";
+            my $power_file = SYS_CPU . "/cpu$cpu/online";
 
             if ( open( my $fh, '>', $power_file ) ) {
                 $state_changed = 1;
