@@ -38,7 +38,7 @@ sub get_cpu_indexes () {
 }
 
 sub get_cpu_settings() {
-    my $cpu_indexes = get_cpu_list();
+    my $cpu_indexes = get_cpu_indexes();
     my $cpus = {};
 
     foreach my $cpu ( @$cpu_indexes ) {
