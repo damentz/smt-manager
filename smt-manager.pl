@@ -47,7 +47,7 @@ sub get_cpu_settings() {
         my $cpu_settings = {};
 
         $cpu_settings->{'core_type'} = 'unknown';
-        $cpu_settings->{'power'}     = 'unknown';
+        $cpu_settings->{'power'}     = 'offline';
 
         # Populate core topology, primary / logical
         if ( open( my $fh, '<', $siblings_file ) ) {
@@ -75,14 +75,9 @@ sub get_cpu_settings() {
 
             chomp($cpu_power);
 
-            if ($cpu_power == 1) {
-                $cpu_settings->{'power'} = 'online';
-            } else {
-                $cpu_settings->{'power'} = 'offline';
-            }
+            $cpu_settings->{'power'} = 'online' if ($cpu_power == 1);
         } else {
             print "[ERROR] Could not open: $power_file\n" if DEBUG;
-            $cpu_settings->{'power'} = 'online';
         }
 
         $cpus->{$cpu} = $cpu_settings;
