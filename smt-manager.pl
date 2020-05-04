@@ -44,10 +44,10 @@ sub get_cpu_settings() {
     foreach my $cpu ( @$cpu_indexes ) {
         my $siblings_file = SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
         my $power_file    = SYS_CPU . "/cpu$cpu/online";
-        my $cpu_settings = {};
-
-        $cpu_settings->{'core_type'} = 'unknown';
-        $cpu_settings->{'power'}     = 'offline';
+        my $cpu_settings = {
+            'core_type' => 'unknown',
+            'power'     => 'offline'
+        };
 
         # Populate core topology, primary / logical
         if ( open( my $fh, '<', $siblings_file ) ) {
@@ -77,7 +77,7 @@ sub get_cpu_settings() {
 
             $cpu_settings->{'power'} = 'online' if ($cpu_power == 1);
         } else {
-            print "[ERROR] Could not open: $power_file, assuming enabled\n" if DEBUG;
+            print "[ERROR] Could not open: $power_file, assuming online\n" if DEBUG;
             $cpu_settings->{'power'} = 'online';
         }
 
