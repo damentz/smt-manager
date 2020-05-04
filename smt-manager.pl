@@ -77,7 +77,8 @@ sub get_cpu_settings() {
 
             $cpu_settings->{'power'} = 'online' if ($cpu_power == 1);
         } else {
-            print "[ERROR] Could not open: $power_file\n" if DEBUG;
+            print "[ERROR] Could not open: $power_file, assuming enabled\n" if DEBUG;
+            $cpu_settings->{'power'} = 'online';
         }
 
         $cpus->{$cpu} = $cpu_settings;
