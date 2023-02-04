@@ -45,7 +45,7 @@ sub get_cpu_settings() {
         my $siblings_file = SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
         my $power_file    = SYS_CPU . "/cpu$cpu/online";
         my $cpu_settings = {
-            'core_type' => 'unknown',
+            'core_type' => 'logical',
             'power'     => 'offline'
         };
 
@@ -60,8 +60,6 @@ sub get_cpu_settings() {
 
             if ( $cpu_num == $siblings[0] ) {
                 $cpu_settings->{'core_type'} = 'primary';
-            } else {
-                $cpu_settings->{'core_type'} = 'logical';
             }
 
         } else {
