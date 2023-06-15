@@ -29,7 +29,7 @@ use Pod::Usage;
 use constant SYS_CPU => '/sys/devices/system/cpu';
 use constant DEBUG => '0';
 
-sub get_cpu_indexes () {
+sub get_cpu_indexes {
     opendir( my $dh, SYS_CPU ) or die "Cannot open folder: " . SYS_CPU;
     my @cpu_indexes = map { s/cpu//r } grep { /^cpu[0-9]+/ } readdir($dh);
     closedir $dh;
@@ -37,7 +37,7 @@ sub get_cpu_indexes () {
     return \@cpu_indexes;
 }
 
-sub get_cpu_settings() {
+sub get_cpu_settings {
     my $cpu_indexes = get_cpu_indexes();
     my $cpus = {};
 
@@ -87,7 +87,7 @@ sub get_cpu_settings() {
 
 }
 
-sub set_logical_cpus($) {
+sub set_logical_cpus {
     my $power_state = shift;
     my $cpus = get_cpu_settings();
     my $state_changed = 0;
@@ -129,7 +129,7 @@ sub set_logical_cpus($) {
     return $state_changed;
 }
 
-sub pretty_print_topology () {
+sub pretty_print_topology {
     my $cpus = get_cpu_settings();
 
     print "CPU topology:\n";
