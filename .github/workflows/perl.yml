@@ -1,0 +1,27 @@
+name: Perl CI
+on: [push, pull_request]
+
+jobs:
+
+  Perl-CI:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.36'
+
+      - name: Install dependencies
+        run: |
+          cpanm -n Perl::Critic
+
+      - name: Check script for syntax errors
+        run: perl -c smt-manager.pl
+
+      - name: Check script with Perl Critic in gentle mode
+        run: perlcritic --gentle smt-manager.pl
+
