@@ -20,18 +20,20 @@
 use warnings;
 use strict;
 
-use v5.20;
+use 5.020;
 
+use Carp;
 use Getopt::Long;
 use Pod::Usage;
+use Readonly;
 
 # This is the top folder where CPUs can be enumerated and more detail retrieved.
-use constant SYS_CPU => '/sys/devices/system/cpu';
-use constant DEBUG => '0';
+Readonly my $SYS_CPU => '/sys/devices/system/cpu';
+Readonly my $DEBUG => 0;
 
 sub get_cpu_indexes {
-    opendir( my $dh, SYS_CPU ) or die "Cannot open folder: " . SYS_CPU;
-    my @cpu_indexes = map { s/cpu//r } grep { /^cpu[0-9]+/ } readdir($dh);
+    opendir my $dh, $SYS_CPU or croak "Cannot open folder: $SYS_CPU";
+    my @cpu_indexes = map { s/cpu//r } grep { /^cpu [0-9]+/x } readdir($dh);
     closedir $dh;
 
     return \@cpu_indexes;
@@ -42,41 +44,38 @@ sub get_cpu_settings {
     my $cpus = {};
 
     foreach my $cpu ( @$cpu_indexes ) {
-        my $siblings_file = SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
-        my $power_file    = SYS_CPU . "/cpu$cpu/online";
+        my $siblings_file = $SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
+        my $power_file    = $SYS_CPU . "/cpu$cpu/online";
         my $cpu_settings = {
-            'core_type' => 'logical',
-            'power'     => 'offline'
+            core_type => 'logical',
+            power     => 'offline'
         };
 
         # Populate core topology, primary / logical
         if ( open( my $fh, '<', $siblings_file ) ) {
 
-            my @siblings = split(/,|-/, <$fh>);
-            close $fh;
+            my @siblings = split(/ ,|- /x, <$fh>);
+            close $fh or carp "Failed to close: $siblings_file";
 
-            my $cpu_num = $cpu;
-            $cpu_num =~ s/cpu(\d+)/$1/;
-
-            if ( $cpu_num == $siblings[0] ) {
-                $cpu_settings->{'core_type'} = 'primary';
+            if ( $cpu == $siblings[0] ) {
+                $cpu_settings->{core_type} = 'primary';
             }
 
         } else {
-            print "[ERROR] Could not open: $siblings_file\n" if DEBUG;
+            say "[ERROR] Could not open: $siblings_file" if $DEBUG;
         }
 
         # Populate core status, online / offline
         if ( open my $fh, '<', $power_file ) {
             my $cpu_power = <$fh>;
-            close $fh;
+            close $fh or carp "Failed to close: $power_file";
 
             chomp($cpu_power);
 
-            $cpu_settings->{'power'} = 'online' if ($cpu_power == 1);
+            $cpu_settings->{power} = 'online' if ($cpu_power == 1);
         } else {
-            print "[ERROR] Could not open: $power_file, assuming online\n" if DEBUG;
-            $cpu_settings->{'power'} = 'online';
+            say "[ERROR] Could not open: $power_file, assuming online" if $DEBUG;
+            $cpu_settings->{power} = 'online';
         }
 
         $cpus->{$cpu} = $cpu_settings;
@@ -93,24 +92,23 @@ sub set_logical_cpus {
     my $state_changed = 0;
 
     foreach my $cpu ( sort { $a <=> $b } keys %$cpus ) {
-        if ( ($cpus->{$cpu}->{'core_type'} eq 'logical' ||
-             $cpus->{$cpu}->{'core_type'} eq 'unknown') &&
-             $cpus->{$cpu}->{'power'} ne $power_state ) {
+        if ( ($cpus->{$cpu}{core_type} eq 'logical' ||
+             $cpus->{$cpu}{core_type} eq 'unknown') &&
+             $cpus->{$cpu}{power} ne $power_state ) {
 
-            my $power_file = SYS_CPU . "/cpu$cpu/online";
+            my $power_file = $SYS_CPU . "/cpu$cpu/online";
 
             if ( open( my $fh, '>', $power_file ) ) {
                 $state_changed = 1;
 
-                print "Setting $cpu to $power_state ... ";
+                print "Setting cpu$cpu to $power_state ... ";
 
-                print $fh '1' if $power_state eq 'online';
-                print $fh '0' if $power_state eq 'offline';
+                print {$fh} ($power_state eq 'online' ? '1' : '0');
 
-                close $fh;
-                print "done!\n";
+                close $fh or carp "Failed to close: $power_file";
+                say "done!";
             } else {
-                print "[ERROR] failed to open file for writing: $power_file.  Are you root?\n"
+                say "[ERROR] failed to open file for writing: $power_file.  Are you root?"
             }
         }
     }
@@ -119,8 +117,8 @@ sub set_logical_cpus {
 
         # Lets rebalance the interrupts after power state changes to guarantee
         # the system will remain stable.
-        unless ( system( 'irqbalance --oneshot' ) == 0 ) {
-            print STDERR "[ERROR] Failed to balance interrupts with 'irqbalance --oneshot', you may experience strange behavior.\n";
+        unless ( system('irqbalance', '--oneshot') == 0 ) {
+            say {*STDERR} q{[ERROR] Failed to balance interrupts with 'irqbalance --oneshot', you may experience strange behavior.};
         }
 
         print "\n";
@@ -132,12 +130,14 @@ sub set_logical_cpus {
 sub pretty_print_topology {
     my $cpus = get_cpu_settings();
 
-    print "CPU topology:\n";
+    say "CPU topology:";
     foreach my $cpu ( sort { $a <=> $b } keys %$cpus ) {
-        print "$cpu: " . $cpus->{$cpu}->{'core_type'} . " | " . $cpus->{$cpu}->{'power'} . "\n";
+        say "$cpu: $cpus->{$cpu}{core_type} | $cpus->{$cpu}{power}";
     }
 
     print "\n";
+
+    return;
 }
 
 ### EXECUTE ###

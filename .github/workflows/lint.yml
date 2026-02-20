@@ -1,0 +1,11 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  perlcritic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo cpan -T Perl::Critic Readonly
+      - run: perlcritic smt-manager.pl
