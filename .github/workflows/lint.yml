@@ -7,14 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo cpan -T Perl::Critic
+      - run: sudo cpan -T Perl::Critic Perl::Critic::Bangs Perl::Critic::Community
       - run: perlcritic smt-manager.pl
+      - run: perlcritic --theme community smt-manager.pl
+      - run: perlcritic --theme bangs smt-manager.pl
 
   syntax:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        perl: ['5.20', '5.30', '5.40', 'stable']
+        perl: ['5.30', '5.40', 'stable']
     container:
       image: perl:${{ matrix.perl }}
     steps:
