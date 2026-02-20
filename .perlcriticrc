@@ -1,3 +1,4 @@
 severity = harsh
 
 [-ErrorHandling::RequireUseOfExceptions]
+[-ValuesAndExpressions::ProhibitConstantPragma]

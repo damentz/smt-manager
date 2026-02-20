@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo cpan -T Perl::Critic Readonly
+      - run: sudo cpan -T Perl::Critic
       - run: perlcritic smt-manager.pl
 
   syntax:
@@ -19,7 +19,6 @@ jobs:
       image: perl:${{ matrix.perl }}
     steps:
       - uses: actions/checkout@v4
-      - run: cpanm -n Readonly
       - run: perl -c smt-manager.pl
 
   podchecker:

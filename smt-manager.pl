@@ -25,14 +25,13 @@ use 5.020;
 use Carp;
 use Getopt::Long;
 use Pod::Usage;
-use Readonly;
 
 # This is the top folder where CPUs can be enumerated and more detail retrieved.
-Readonly my $SYS_CPU => '/sys/devices/system/cpu';
-Readonly my $DEBUG => 0;
+use constant SYS_CPU => '/sys/devices/system/cpu';
+use constant DEBUG => 0;
 
 sub get_cpu_indexes {
-    opendir my $dh, $SYS_CPU or croak "Cannot open folder: $SYS_CPU";
+    opendir my $dh, SYS_CPU or croak "Cannot open folder: SYS_CPU";
     my @cpu_indexes = map { s/cpu//r } grep { /^cpu [0-9]+/x } readdir($dh);
     closedir $dh;
 
@@ -44,8 +43,8 @@ sub get_cpu_settings {
     my $cpus = {};
 
     foreach my $cpu ( @$cpu_indexes ) {
-        my $siblings_file = $SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
-        my $power_file    = $SYS_CPU . "/cpu$cpu/online";
+        my $siblings_file = SYS_CPU . "/cpu$cpu/topology/thread_siblings_list";
+        my $power_file    = SYS_CPU . "/cpu$cpu/online";
         my $cpu_settings = {
             core_type => 'logical',
             power     => 'offline'
@@ -62,7 +61,7 @@ sub get_cpu_settings {
             }
 
         } else {
-            say "[ERROR] Could not open: $siblings_file" if $DEBUG;
+            say "[ERROR] Could not open: $siblings_file" if DEBUG;
         }
 
         # Populate core status, online / offline
@@ -74,7 +73,7 @@ sub get_cpu_settings {
 
             $cpu_settings->{power} = 'online' if ($cpu_power == 1);
         } else {
-            say "[ERROR] Could not open: $power_file, assuming online" if $DEBUG;
+            say "[ERROR] Could not open: $power_file, assuming online" if DEBUG;
             $cpu_settings->{power} = 'online';
         }
 
@@ -96,7 +95,7 @@ sub set_logical_cpus {
              $cpus->{$cpu}{core_type} eq 'unknown') &&
              $cpus->{$cpu}{power} ne $power_state ) {
 
-            my $power_file = $SYS_CPU . "/cpu$cpu/online";
+            my $power_file = SYS_CPU . "/cpu$cpu/online";
 
             if ( open( my $fh, '>', $power_file ) ) {
                 $state_changed = 1;
