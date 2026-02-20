@@ -130,9 +130,10 @@ sub set_logical_cpus {
 sub pretty_print_topology {
     my $cpus = get_cpu_settings();
 
+    my $width = length( (sort { $a <=> $b } keys %$cpus)[-1] + 1 );
     say "CPU topology:";
     foreach my $cpu ( sort { $a <=> $b } keys %$cpus ) {
-        say "$cpu: $cpus->{$cpu}{core_type} | $cpus->{$cpu}{power}";
+        printf "%*d: %s | %s\n", $width, $cpu + 1, $cpus->{$cpu}{core_type}, $cpus->{$cpu}{power};
     }
 
     print "\n";
