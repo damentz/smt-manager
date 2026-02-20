@@ -9,3 +9,21 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo cpan -T Perl::Critic Readonly
       - run: perlcritic smt-manager.pl
+
+  syntax:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        perl: ['5.20', '5.30', '5.40', 'stable']
+    container:
+      image: perl:${{ matrix.perl }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: cpanm -n Readonly
+      - run: perl -c smt-manager.pl
+
+  podchecker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: podchecker smt-manager.pl
