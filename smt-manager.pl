@@ -112,17 +112,6 @@ sub set_logical_cpus {
         }
     }
 
-    if ( $state_changed ) {
-
-        # Lets rebalance the interrupts after power state changes to guarantee
-        # the system will remain stable.
-        unless ( system('irqbalance', '--oneshot') == 0 ) {
-            say {*STDERR} q{[ERROR] Failed to balance interrupts with 'irqbalance --oneshot', you may experience strange behavior.};
-        }
-
-        print "\n";
-    }
-
     return $state_changed;
 }
 
@@ -170,6 +159,7 @@ pretty_print_topology();
 if ( defined $power_state && set_logical_cpus($power_state) ) {
 
     # If there was a change, print the new state.
+    print "\n";
     pretty_print_topology();
 }
 
